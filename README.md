@@ -29,8 +29,3 @@ python IDF.py <image/file>
 ```
 ### Version
 IDF v1.0
-
-<h1 align="center">
-  <br>
-  <img src="https://imgur.com/a/0wiU56H">
-</h1>
