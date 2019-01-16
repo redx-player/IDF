@@ -18,7 +18,7 @@ by using some tools like binwalk,foremost,exiftool,stegsolve,etc
 
 ### Installation:
 ```
-git clone https://github.com/Red-x-player/IDF
+git clone https://github.com/Red-x-player/IDF.git
 cd IDF
 pip install -r requirements.txt
 chmod +x stegsolve.jar
