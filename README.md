@@ -6,7 +6,7 @@ by using some tools like binwalk,foremost,exiftool,stegsolve,etc
 
 ### How the tool works
 * check from file type
-* convert bytes to strings > 2strings.txt
+* convert bytes to strings > strings.txt
 * extrect image meta data > metaData.txt
 * using foremost to extract hidden files
 * using binwalk to extract hidden files
