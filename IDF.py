@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# Author: Mozzamil Eltayeeb (Red-x)
-# Last Updated: 13/1/19
-# v1.0
+# Author: Mozzamil Eltayeeb (red-x)
+# Last Updated: 29/03/20
+# v2.0
+
 
 #~~~~~~~~~~~~~~~~~import libs~~~~~~~~~~~~~~~~~~~~~#
-from progressbar import ProgressBar, Percentage, Bar
 import commands
 import os
 import sys
@@ -12,47 +12,54 @@ import subprocess
 import time
 import string
 
+
 #~~~~~~~~~~~~~~~~~print colors~~~~~~~~~~~~~~~~~~~~#
 w="\033[1;37m"
-red="\033[1;31m"
-green="\033[1;32m"
+r="\033[1;31m"
+g="\033[1;32m"
+y="\033[1;33m"
 yellow="\033[1;33m"
 b="\033[1;34m"
-
 
 #~~~~~~~~~~~~~~~~~~  banner  ~~~~~~~~~~~~~~~~~~~~~#
 os.system("clear")
 print w+"========================================="
-print"||"+red+"                  __                 "+w+"||"
-print"||"+red+"                 /  \                "+w+"||"
-print"||"+red+"      __        //  \\\\            __ "+w+"||  Image Digital Forensic"
-print"||"+red+"     /  \\"+w+"d888888b"+red+"    \\\\          /  \\"+w+"||  "
-print"||"+red+"    // "+w+".88"+red+"    //"+w+"88."+red+"   \\\\        //   "+w+"||  Author: Red-x"
-print"||"+red+"   //  "+w+"88"+red+"\\\\  //  "+w+"88"+red+"    \\\\      //    "+w+"||"
-print"||"+red+"  //   "+w+"88"+red+" \\\\//   "+w+"88"+red+"     \\\\    //     "+w+"||  Twitter: @mozzamil_redx"
-print"||"+red+" //    "+w+"88        88"+red+"      \\\\  //      "+w+"||"
-print"||"+red+"//     "+w+"'88      88'"+red+"       \\\\//       "+w+"||  Version: 1.0"
+print"||"+r+"                  __                 "+w+"||"
+print"||"+r+"                 /  \                "+w+"||"
+print"||"+r+"      __        //  \\\\            __ "+w+"||  Image Digital Forensic"
+print"||"+r+"     /  \\"+w+"d888888b"+r+"    \\\\          /  \\"+w+"||  "
+print"||"+r+"    // "+w+".88"+r+"    //"+w+"88."+r+"   \\\\        //   "+w+"||  Author: red-x"
+print"||"+r+"   //  "+w+"88"+r+"\\\\  //  "+w+"88"+r+"    \\\\      //    "+w+"||"
+print"||"+r+"  //   "+w+"88"+r+" \\\\//   "+w+"88"+r+"     \\\\    //     "+w+"||  Twitter: @mozzamil_redx"
+print"||"+r+" //    "+w+"88        88"+r+"      \\\\  //      "+w+"||"
+print"||"+r+"//     "+w+"'88      88'"+r+"       \\\\//       "+w+"||  Version: 2.0"
 print"||        "+b+"/0/"+w+"88888P                    "+w+"||"
-print"||       "+b+"/0/                           "+w+"||  https://github.com/Red-x-player/IDF"
+print"||       "+b+"/0/                           "+w+"||  https://github.com/red-x-player/IDF"
 #print"||      "+b+"/0/                            "+w+"||"
 print"========"+b+"/0/"+w+"=============================="
 print b+"       /0/\n\n"
 
-
-
+#~~~~~~~~~~~~~~~~~~Get file info~~~~~~~~~~~~~~~~~~~#
+if len(sys.argv)>=2:
+	#Full file Path with replace special chars 
+	filePath = sys.argv[1].replace(" ","\ ").replace("(","\(").replace(")","\)")
+	#Full file path with no replace
+	filePath1= sys.argv[1]
+	#Directory name with replace special chars to mkdir and rm
+	dirName  = '%s' % (os.path.basename(filePath))
+	#file name with out replace 
+	fileName= '%s' % (os.path.basename(sys.argv[1]))
+else:
+	#Full file path with no replace
+	filePath1= raw_input(g+"[+] "+y+"Enter your file path: "+w)
+	#Full file Path with replace special chars 
+	filePath = filePath1.replace(" ","\ ").replace("(","\(").replace(")","\)")
+	#Directory name with replace special chars to mkdir and rm
+	dirName  = '%s' % (os.path.basename(filePath))
+	#file name with out replace
+	fileName= '%s' % (os.path.basename(filePath1))
 
 #~~~~~~~~~~~~~~~~~~check type~~~~~~~~~~~~~~~~~~~~~#
-if len(sys.argv)==1:
-    time.sleep(0.4)
-    exit(red+"[+] No such file or directory")
-
-fullPATH=sys.argv[1]
-fullPATH=fullPATH.replace(" ","\ ")
-imageName=fullPATH
-if fullPATH.find("/")!=-1:
-    PathArray=sys.argv[1].split("/")
-    imageName=PathArray[len(PathArray)-1]
-
 fileTypes=["ASCII text",
 "RAR archive data",
 "Zip archive data",
@@ -75,24 +82,30 @@ fileTypes=["ASCII text",
 "directory",
 "empty"]
 
-output = subprocess.check_output("file "+fullPATH, shell=True)
+output = subprocess.check_output("file "+filePath, shell=True)
 fileType=False
 for getType in fileTypes:
     if output.find(getType)!=-1:
         time.sleep(0.9)
-        print green+"[+] "+yellow+"File Type: "+getType
+        print g+"[+] "+y+"File Type: "+getType
         fileType=getType
         break
 if fileType==False:
-    print red+"[+] Unknown file type"
-    
-#~~~~~~~~~~~~~~~~~Bytes2Strings~~~~~~~~~~~~~~~~~#
-os.system("mkdir _%s"%(imageName))
+    print r+"[+] Unknown file type"
+
+#~~~~~~~~~~~~~~~~~stegsolve~~~~~~~~~~~~~~~~~~~~#
 time.sleep(0.9)
-print green+"[+] "+yellow+"Change bytes to strings > 2strings.txt"
+print g+"[+] "+y+"Try to open image in stegsolve"
+os.system("java -jar stegsolve.jar")
+
+#~~~~~~~~~~~~~~~~~Bytes2Strings~~~~~~~~~~~~~~~~~#
+if os.path.exists("_%s"%(fileName)) == False:
+	os.system("mkdir _%s"%(dirName))
+time.sleep(0.9)
+print(g+"[+] "+y+"Change bytes to strings into "+w+"strings.txt")
 min=4
-o = open("_%s/2strings.txt"%(imageName),"wb")
-f = open(sys.argv[1],"rb")
+o = open("_%s/strings.txt"%(fileName),"wb")
+f = open(filePath1,"rb")
 result = ""
 for c in f.read():
     if c in string.printable:
@@ -105,95 +118,113 @@ if len(result) >= min:
     o.write(result+"\n")
 
 #~~~~~~~~~~~~~~~~~meta data~~~~~~~~~~~~~~~~~~~~~#
-os.system("exiftool %s > _%s/metaData.txt"%(fullPATH,imageName))
+os.system("exiftool %s > _%s/metaData.txt"%(filePath,dirName))
 time.sleep(0.9)
-print green+"[+] "+yellow+"Extract meta data to metaData.txt"
+print g+"[+] "+y+"Extract meta data into "+w+"metaData.txt"+y
 
 
 #~~~~~~~~~~~~~~~~~foremost~~~~~~~~~~~~~~~~~~~~~#
-os.system("mkdir _%s/hiddenFiles;mkdir _%s/hiddenFiles/foremost"%(imageName,imageName))
-output = subprocess.check_output("foremost -t all -v -i %s -o _%s/hiddenFiles/foremost"%(fullPATH,imageName), shell=True)
+if os.path.exists("_%s/hiddenFiles"%(fileName)) == False:
+	os.system("mkdir _%s/hiddenFiles;mkdir _%s/hiddenFiles/foremost"%(dirName,dirName))
+else:
+	os.system("rm -r _%s/hiddenFiles/foremost/*"%(dirName))
+
+output = subprocess.check_output("foremost -t all -v -i %s -o _%s/hiddenFiles/foremost"%(filePath,dirName), shell=True)
 time.sleep(0.9)
-print green+"[+] "+yellow+"Foremost extract hidden files"
+print g+"[+] "+y+"Foremost extract hidden files"
 
 
 #~~~~~~~~~~~~~~~~~ binwalk ~~~~~~~~~~~~~~~~~~~~#
-output = subprocess.check_output("binwalk -e %s --directory _%s/hiddenFiles"%(fullPATH,imageName), shell=True)
+output = subprocess.check_output("binwalk -e %s --directory _%s/hiddenFiles"%(filePath,dirName), shell=True)
 time.sleep(0.9)
-print green+"[+] "+yellow+"Binwalk extract hidden files"
-
-
-#~~~~~~~~~~~~~~~~~stegsolve~~~~~~~~~~~~~~~~~~~~#
-time.sleep(0.9)
-print green+"[+] "+yellow+"Try to open image in stegsolve"
-os.system("java -jar stegsolve.jar")
+print g+"[+] "+y+"Binwalk extract hidden files"
 
 
 #~~~~~~~~~~~~~~ reverse bytes ~~~~~~~~~~~~~~~~~#
 time.sleep(0.9)
-print green+"[+] "+yellow+"Reverse image bytes"
-file1 = open(sys.argv[1],'rb')
+print g+"[+] "+y+"Reverse image bytes and saved into "+w+"revImage"
+file1 = open(filePath1,'rb')
 data = file1.read()
 data2 = []
-file2 = open("_%s/revImage"%(imageName.replace("\ "," ")),"wb")
+file2 = open("_%s/revImage"%(fileName),"wb")
 file2.write(data[::-1])
 file2.close()
 
-
-#~~~~~~~~~~~~~~~~ and2bytes ~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~ and operation ~~~~~~~~~~~~~~~~~~~#
 time.sleep(0.9)
-os.system("mkdir _%s/AND"%(imageName))
-andRange=raw_input(green+"[+] "+yellow+"Enter the range in decimal to do AND opretion(default 1-100): ")
+if os.path.exists("_%s/AND"%(fileName)) == False:
+	os.system("mkdir _%s/AND"%(dirName))
+andRange=raw_input(g+"[+] "+yellow+"AND operation enter the range in decimal(default 1-100): "+w)
 if andRange=="":
     andRange="1-100"
 andRange=andRange.split("-")
 for x in range(int(andRange[0]),int(andRange[1])+1):
-    f=bytearray(open(sys.argv[1],'rb').read())
-    for y in range(len(f)):
-        f[y]&=x
-    open('_%s/AND/andWith%s'%(imageName.replace("\ "," "),x),'wb').write(f)
+    f=bytearray(open(filePath1,'rb').read())
+    for z in range(len(f)):
+        f[z]&=x
+    open('_%s/AND/andWith%s'%(fileName,x),'wb').write(f)
 
 
-#~~~~~~~~~~~~~~~~ xor2bytes ~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~ xor operation ~~~~~~~~~~~~~~~~~~~#
 time.sleep(0.9)
-os.system("mkdir _%s/XOR"%(imageName))
-xorRange=raw_input(green+"[+] "+yellow+"Enter the range in decimal to do XOR opretion(default 1-100): ")
+if os.path.exists("_%s/XOR"%(fileName)) == False:
+	os.system("mkdir _%s/XOR"%(dirName))
+xorRange=raw_input(g+"[+] "+yellow+"XOR operation enter the range in decimal(default 1-100): "+w)
 if xorRange=="":
     xorRange="1-100"
 xorRange=xorRange.split("-")
 for x in range(int(xorRange[0]),int(xorRange[1])+1):
-    f=bytearray(open(sys.argv[1],'rb').read())
-    for y in range(len(f)):
-        f[y]^=x
-    open('_%s/XOR/xorWith%s'%(imageName.replace("\ "," "),x),'wb').write(f)
-
+    f=bytearray(open(filePath1,'rb').read())
+    for z in range(len(f)):
+        f[z]^=x
+    open('_%s/XOR/xorWith%s'%(fileName,x),'wb').write(f)
 
 #~~~~~~~~~~~~~~steghide crack~~~~~~~~~~~~~~~~~~#
 if fileType=="JPEG image data":
-    crack=raw_input(green+"[+] "+yellow+"Do you want to crack this image with steghide crack(take longe time)?[N/y] ")
-    if crack.lower().startswith("y")!=False:
-        os.system("mkdir _%s/steghideCrack"%(imageName))
-        wordlist=raw_input(green+"[+] "+yellow+"Enter wordlist path (default rockyou): ")
-        if wordlist=="" :
+    crack=raw_input(g+"[+] "+y+"Do you want to crack this image with steghide crack(take long time)?[N/y] "+w)
+    if crack.lower().startswith("y") != False:
+    	if os.path.exists("_%s/steghideCrack"%(fileName)) == False:
+        	os.system("mkdir _%s/steghideCrack"%(dirName))
+        
+        r = commands.getoutput("steghide extract -sf %s -p '' -xf _%s/steghideCrack/output.txt"%(filePath,dirName,))
+        if not "no pude extraer" in r and not "could not extract" in r and not "can not uncompress data" in r:
+                    print(g+"[+] "+y+"Information obtained with no password")
+                    time.sleep(0.9)
+                    exit(g+"[+] "+y+"Done !!")
+                    
+        wordlist=raw_input(g+"[+] "+y+"Enter wordlist path (default rockyou): "+w)
+        if wordlist == "":
             if os.path.exists("/usr/share/wordlists/rockyou.txt")==True:
                 wordlist="/usr/share/wordlists/rockyou.txt"
             else:
-                exit(green+"[+] "+yellow+"You don't have rockyou in this path '/usr/share/wordlists/rockyou.txt'")
-        print green+"[+] "+yellow+"Start cracking..."
+                exit(g+"[+] "+y+"You don't have rockyou in this path '/usr/share/wordlists/rockyou.txt'")
+        if os.path.exists(wordlist) == False:
+             print(g+"[+] "+y+"This wordlist path not exists '%s'"%(wordlist))
+             time.sleep(0.9)
+             exit(g+"[+] "+y+"Done !!")
+             
+        print g+"[+] "+y+"Start cracking..."
+        
+        max_lines = sum(1 for line in open(wordlist, 'r'))        
         i = 0
-        ofile = imageName.split('.')[0] + "_flag.txt"
-        nlines = len(open(wordlist).readlines())
         with open(wordlist, 'r') as passFile:
-            pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=nlines).start()
-            for line in passFile.readlines():
-                password = line.strip('\n')
-                r = commands.getoutput("steghide extract -sf %s -p '%s' -xf _%s/steghideCrack/%s" % (fullPATH, password,imageName, ofile))
-                if not "no pude extraer" in r and not "could not extract" in r:
-                    print(green+"\n[+] "+yellow+"Information obtained with password: %s" % password)
+            passes = passFile.readlines()
+            for password in passes:
+                password = password.split("\n")[0]
+                output = "%*d / %d | %6.2f%% -> %s\r" % (len(str(max_lines)),i,max_lines,100 * i / max_lines,password)
+                sys.stdout.write(w+output)
+                sys.stdout.flush()
+                if password.find("'") != -1:
+                    r = commands.getoutput("steghide extract -sf %s -p \"%s\" -xf _%s/steghideCrack/output.txt" % (filePath,password,dirName))
+                else:
+                    r = commands.getoutput("steghide extract -sf %s -p '%s' -xf _%s/steghideCrack/output.txt" % (filePath, password,dirName))
+                if not "no pude extraer" in r and not "could not extract" in r and not "can not uncompress data" in r:
+                    print(g+"\n[+] "+y+"Information obtained with password:"+w+" %s" % password)
                     break
-                pbar.update(i + 1)
                 i += 1
 
 #~~~~~~~~~~~~~~~~~~Finsh scan~~~~~~~~~~~~~~~~#
 time.sleep(0.9)
-print green+"[+] "+yellow+"Done !!"
+print(g+"[+] "+y+"Result saved into "+w+"_%s"%(fileName))
+time.sleep(0.9)
+print g+"[+] "+y+"Done !!"
