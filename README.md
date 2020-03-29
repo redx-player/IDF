@@ -1,4 +1,4 @@
-# Image Digital Forensic tool - [IDF](https://github.com/Red-x-player/IDF.git)
+# Image Digital Forensic tool V2.0 - [IDF](https://github.com/Red-x-player/IDF.git)
 
 This tool was designed to make a full analysis for images and give a full report
 <br> IDF can help CTF player or cybersecurity engineer to perform tasks faster and more quickly
@@ -28,4 +28,4 @@ chmod +x stegsolve.jar
 python IDF.py <image/file>
 ```
 ### Version
-IDF v1.0
+IDF v2.0
